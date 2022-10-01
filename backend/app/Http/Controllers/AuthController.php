@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,6 +48,30 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        //validate the input data
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        //return the validator errors
+        if ($validator->fails()) {
+            return $this->jsonResponse($validator->errors(), 'data', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            $token = $user->createToken('DateAuthApp')->plainTextToken;
+
+            $result = [
+                'user' => $user,
+                'token' => $token,
+            ];
+
+            return $this->jsonResponse($result, 'data', Response::HTTP_ACCEPTED);
+        }
+
+        return $this->jsonResponse('UnAuthorized', 'data', Response::HTTP_UNAUTHORIZED, 'Email/Password is wrong!');
     }
 
     public function logout()
