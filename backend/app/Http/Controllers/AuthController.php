@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -76,5 +77,7 @@ class AuthController extends Controller
 
     public function logout()
     {
+        Auth::user()->tokens()->delete();
+        return $this->jsonResponse('Logging Out', 'data', Response::HTTP_OK, 'Logged Out Successfully');
     }
 }
