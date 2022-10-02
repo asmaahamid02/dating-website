@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlockedUserController;
 use App\Http\Controllers\FavoriteUserController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -37,5 +38,12 @@ Route::group(['prefix' => 'v0.1'], function () {
             Route::get('/{id}', [FavoriteUserController::class, 'update']);
         });
         ####End Users Favorites####
+
+        ####Start Users Block####
+        Route::group(['prefix' => 'blocks'], function () {
+            Route::get('/', [BlockedUserController::class, 'index']);
+            Route::get('/{id}', [BlockedUserController::class, 'update']);
+        });
+        ####End Users Block####
     });
 });
