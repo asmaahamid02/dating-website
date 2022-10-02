@@ -25,14 +25,14 @@ Route::group(['prefix' => 'v0.1'], function () {
         ####Start Users Favorites####
         Route::group(['prefix' => 'favorites'], function () {
             Route::get('/', [FavoriteUserController::class, 'getFavoriteUsers']);
-            Route::get('/{id}', [FavoriteUserController::class, 'updateFavoriteStatus']);
+            Route::get('/{id}', [FavoriteUserController::class, 'favoriteUser']);
         });
         ####End Users Favorites####
 
         ####Start Users Block####
         Route::group(['prefix' => 'blocks'], function () {
             Route::get('/', [BlockedUserController::class, 'getBlockedUsers']);
-            Route::get('/{id}', [BlockedUserController::class, 'updateBlockStatus']);
+            Route::get('/{id}', [BlockedUserController::class, 'blockUser']);
         });
         ####End Users Block####
 
