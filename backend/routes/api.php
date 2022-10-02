@@ -34,6 +34,7 @@ Route::group(['prefix' => 'v0.1'], function () {
         ####Start Users Favorites####
         Route::group(['prefix' => 'favorites'], function () {
             Route::get('/', [FavoriteUserController::class, 'index']);
+            Route::get('/{id}', [FavoriteUserController::class, 'update']);
         });
         ####End Users Favorites####
     });
