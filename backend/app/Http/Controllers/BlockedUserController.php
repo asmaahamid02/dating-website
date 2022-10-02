@@ -35,7 +35,7 @@ class BlockedUserController extends Controller
 
         if ($user) {
             //check if there is a relation previousely
-            if (Auth::user()->favoriting->contains($blocked_user_id))
+            if (Auth::user()->blocking->contains($blocked_user_id))
                 //remove it
                 Auth::user()->blocking()->detach($blocked_user_id);
             else
