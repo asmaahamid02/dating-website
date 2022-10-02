@@ -26,16 +26,20 @@ class FavoriteUserController extends Controller
 
     public function update($favorite_user_id)
     {
-        $user = User::where('id', $favorite_user_id)->first();
+        //get the user who will added to favorites
+        $user = User::where('id', $favorite_user_id)->where('id', '!=', Auth::id())->first();
 
         if ($user) {
+            //check if the user is in the favorites list
             $favorited = FavoriteUser::where('user_id', Auth::id())
                 ->where('favorite_user_id', $favorite_user_id)
                 ->first();
 
+            //if found delete it
             if ($favorited)
                 //delete
                 $favorited->delete();
+            //else create it    
             else
                 //create
                 FavoriteUser::create([
