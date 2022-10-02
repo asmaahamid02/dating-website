@@ -16,7 +16,9 @@ class UserController extends Controller
     use ResponseJson;
     public function index()
     {
-        $users = User::where('is_visible', 1)->with('profile')->get();
+        $users = User::where('is_visible', 1)
+            ->with('profile')
+            ->get();
 
         if ($users->isNotEmpty())
             return $this->jsonResponse($users, 'data', Response::HTTP_OK);
@@ -26,7 +28,10 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::where('id', $id)->where('is_visible', 1)->with('profile')->first();
+        $user = User::where('id', $id)
+            ->where('is_visible', 1)
+            ->with('profile')
+            ->first();
 
         if ($user)
             return $this->jsonResponse($user, 'data', Response::HTTP_OK);
@@ -111,5 +116,29 @@ class UserController extends Controller
             return $this->jsonResponse($user, 'data', Response::HTTP_OK, 'Profile Updated Successfully');
         }
         return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND, 'User not found');
+    }
+
+    public function getInterestedInUsers($id)
+    {
+        $user = User::where('id', $id)->where('is_visible', 1)->first();
+
+        if ($user) {
+            $interested_in = [$user->interested_in];
+            if ($user->interested_in == 'both') {
+                $interested_in = ['female', 'male'];
+            }
+            $all_users =
+                User::whereIn('gender',  $interested_in)
+                ->where('is_visible', 1)
+                ->orderBy('country')
+                ->orderBy('city')
+                ->get();
+
+            if ($all_users->isNotEmpty())
+                return $this->jsonResponse($all_users, 'data', Response::HTTP_OK);
+
+            return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
+        }
+        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
     }
 }
