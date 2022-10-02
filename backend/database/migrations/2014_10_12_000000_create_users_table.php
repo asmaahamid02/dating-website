@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('interested_in');
             $table->string('country');
             $table->string('city');
+            $table->boolean('is_visible')->default(1);
             $table->timestamps();
         });
     }
