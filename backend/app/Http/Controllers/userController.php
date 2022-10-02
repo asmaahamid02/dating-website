@@ -24,14 +24,29 @@ class UserController extends Controller
         return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
     }
 
-    public function createProfile(Request $request, $id)
+    public function show($id)
+    {
+        $user = User::find($id);
+
+        if ($user)
+            return $this->jsonResponse($user, 'data', Response::HTTP_OK);
+
+        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
+    }
+
+    public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'nickname' => 'min:5',
             'age' => 'numeric',
             'bio' => 'max:150',
             'birthdate' => 'date',
-            'is_visible' => 'required'
+            'is_visible' => 'required',
+            'gender' => 'required',
+            'interested_in' => 'required',
+            'country' => 'required',
+            'city' => 'required',
+            'is_visible' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -40,19 +55,30 @@ class UserController extends Controller
 
         $user = User::find($id);
         if ($user) {
-            $data_to_update = [];
-            $data_to_update['is_visible'] = $request->is_visible;
+            $user_data_to_update = [];
+            $user_profile_data = [];
+
+            //collect the user data
+            $user_data_to_update['gender'] = $request->gender;
+            $user_data_to_update['interested_in'] = $request->interested_in;
+            $user_data_to_update['country'] = $request->country;
+            $user_data_to_update['city'] = $request->city;
+            $user_data_to_update['is_visible'] = $request->is_visible;
+
+            $user->update($user_data_to_update);
+
+            //collect the user profile data            
             if ($request->has('nickname')) {
-                $data_to_update['nickname'] = $request->nickname;
+                $user_profile_data['nickname'] = $request->nickname;
             }
             if ($request->has('bio')) {
-                $data_to_update['bio'] = $request->bio;
+                $user_profile_data['bio'] = $request->bio;
             }
             if ($request->has('birthdate')) {
-                $data_to_update['birthdate'] = $request->birthdate;
+                $user_profile_data['birthdate'] = $request->birthdate;
             }
             if ($request->has('age')) {
-                $data_to_update['age'] = $request->age;
+                $user_profile_data['age'] = $request->age;
             }
             if ($request->has('profile_picture')) {
                 $base64_image = $request->profile_picture;
@@ -66,32 +92,24 @@ class UserController extends Controller
                 //specify the full image name
                 $imageName = rand(100000, 999999) . time() . '.' . $extension;
                 //add it to the array
-                $data_to_update['profile_picture'] =  $imageName;
+                $user_profile_data['profile_picture'] =  $imageName;
             }
-
-            if (count($data_to_update) > 0) {
-                $data_to_update['user_id'] = $id;
-                $user_profile = UserProfile::create($data_to_update);
+            if (count($user_profile_data) > 0) {
+                $user_profile = UserProfile::where('user_id', $id)->first();
                 if ($user_profile) {
-                    if ($request->has('profile_picture'))
-                        //move the image to the directory
-                        Storage::disk('public')->put('users/profiles/' . $imageName, base64_decode($file_data));
-
-                    return $this->jsonResponse($user_profile, 'data', Response::HTTP_OK, 'Profile Created Successfully');
+                    $user_profile->update($user_profile_data);
+                } else {
+                    $user_profile_data['user_id'] = $id;
+                    $user_profile = UserProfile::create($user_profile_data);
                 }
+
+                if ($request->has('profile_picture'))
+                    //move the image to the directory
+                    Storage::disk('public')->put('users/profiles/' . $imageName, base64_decode($file_data));
             }
-            return $this->jsonResponse('', 'data', Response::HTTP_UNPROCESSABLE_ENTITY, 'Nothing to update');
+
+            return $this->jsonResponse($user, 'data', Response::HTTP_OK, 'Profile Updated Successfully');
         }
         return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND, 'User not found');
-    }
-
-    public function show($id)
-    {
-        $user = User::find($id);
-
-        if ($user)
-            return $this->jsonResponse($user, 'data', Response::HTTP_OK);
-
-        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
     }
 }
