@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'v0.1'], function () {
-    Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
+        Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
+        Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
         Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
 
         ####Start Users Group####
