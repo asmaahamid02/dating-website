@@ -33,22 +33,11 @@ class UserController extends Controller
             $interested_in = ['female', 'male'];
         }
 
-        //get the users who are blocked by the logged in user
-        $blockedUsersData = BlockedUser::where('user_id', $id)->get('blocked_user_id');
-        $blockedUsersIDs = $this->collectionToArray($blockedUsersData, 'blocked_user_id');
-
-        //get the users who blocked the logged in user
-        $userBlockedByByData = BlockedUser::where('blocked_user_id', $id)->get('user_id');
-        $blockedUsersByIDs = $this->collectionToArray($userBlockedByByData, 'user_id');
-
-        //merge the blocked users by auth, the users who blocked auth, and the auth ids into one array
-        $blocked_ids = array_merge($blockedUsersIDs, $blockedUsersByIDs, [$id]);
-
         //get the users
         $all_users =
             User::whereIn('gender',  $interested_in)
             ->where('is_visible', 1)
-            ->whereNotIn('id', $blocked_ids)
+            ->whereNotIn('id', $this->getMatchedIDs($id))
             ->orderBy('country')
             ->orderBy('city')
             ->get();
@@ -160,5 +149,19 @@ class UserController extends Controller
         }
 
         return $array;
+    }
+
+    public function getMatchedIDs($user_id)
+    {
+        //get the users who are blocked by the logged in user
+        $blockedUsersData = BlockedUser::where('user_id', $user_id)->get('blocked_user_id');
+        $blockedUsersIDs = $this->collectionToArray($blockedUsersData, 'blocked_user_id');
+
+        //get the users who blocked the logged in user
+        $userBlockedByByData = BlockedUser::where('blocked_user_id', $user_id)->get('user_id');
+        $blockedUsersByIDs = $this->collectionToArray($userBlockedByByData, 'user_id');
+
+        //merge the blocked users by auth, the users who blocked auth, and the auth ids into one array
+        return array_merge($blockedUsersIDs, $blockedUsersByIDs, [$user_id]);
     }
 }
