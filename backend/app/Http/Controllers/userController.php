@@ -12,6 +12,12 @@ class userController extends Controller
     use ResponseJson;
     public function index()
     {
+        $users = User::all();
+
+        if ($users->isNotEmpty())
+            return $this->jsonResponse($users, 'data', Response::HTTP_OK);
+
+        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
     }
 
     public function show($id)
