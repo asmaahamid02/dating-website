@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlockedUser;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Traits\ResponseJson;
@@ -11,34 +12,51 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class UserController extends Controller
 {
     use ResponseJson;
-    public function index()
+    public function __construct()
     {
-        $id = Auth::id();
-        $user = User::where('id', $id)->first();
+        $this->middleware('auth:api');
+    }
 
-        if ($user) {
-            $interested_in = [$user->interested_in];
-            if ($user->interested_in == 'both') {
-                $interested_in = ['female', 'male'];
-            }
-            $all_users =
-                User::whereIn('gender',  $interested_in)
-                ->where('is_visible', 1)
-                ->where('id', '!=', $id)
-                ->orderBy('country')
-                ->orderBy('city')
-                ->get();
+    public function getUsers()
+    {
+        $id = auth()->id();
+        $user = User::find($id)->first();
 
-            if ($all_users->isNotEmpty())
-                return $this->jsonResponse($all_users, 'data', Response::HTTP_OK);
-
-            return $this->jsonResponse('Users not found', 'message', Response::HTTP_NOT_FOUND);
+        $interested_in = [$user->interested_in];
+        if ($user->interested_in == 'both') {
+            $interested_in = ['female', 'male'];
         }
-        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
+
+        //get the users who are blocked by the logged in user
+        $blockedUsersData = BlockedUser::where('user_id', $id)->get('blocked_user_id');
+        $blockedUsersIDs = $this->collectionToArray($blockedUsersData, 'blocked_user_id');
+
+        //get the users who blocked the logged in user
+        $userBlockedByByData = BlockedUser::where('blocked_user_id', $id)->get('user_id');
+        $blockedUsersByIDs = $this->collectionToArray($userBlockedByByData, 'user_id');
+
+        //merge the blocked users by auth, the users who blocked auth, and the auth ids into one array
+        $blocked_ids = array_merge($blockedUsersIDs, $blockedUsersByIDs, [$id]);
+
+        //get the users
+        $all_users =
+            User::whereIn('gender',  $interested_in)
+            ->where('is_visible', 1)
+            ->whereNotIn('id', $blocked_ids)
+            ->orderBy('country')
+            ->orderBy('city')
+            ->get();
+
+        if ($all_users->isNotEmpty())
+            return $this->jsonResponse($all_users, 'data', Response::HTTP_OK);
+
+        return $this->jsonResponse('Users not found', 'message', Response::HTTP_NOT_FOUND);
     }
 
     public function show($id)
@@ -131,5 +149,16 @@ class UserController extends Controller
             return $this->jsonResponse('Profile Updated Successfully', 'data', Response::HTTP_OK);
         }
         return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
+    }
+
+    public function collectionToArray($collection, $attribute)
+    {
+        $array = [];
+
+        foreach ($collection as $row) {
+            $array[] = $row->$attribute;
+        }
+
+        return $array;
     }
 }
