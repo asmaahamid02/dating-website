@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'v0.1'], function () {
-    Route::group(['middleware' => 'api', 'prefix' => 'auth'], function () {
+    Route::group(['middleware' => 'api'], function () {
         Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
         Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
         Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
 
         ####Start Users Group####
         Route::group(['prefix' => 'users'], function () {
-            Route::get('/', [UserController::class, 'index']);
+            Route::get('/', [UserController::class, 'getUsers']);
             Route::get('/{id}', [UserController::class, 'show']);
             Route::patch('/', [UserController::class, 'update']);
         });
@@ -34,15 +34,15 @@ Route::group(['prefix' => 'v0.1'], function () {
 
         ####Start Users Favorites####
         Route::group(['prefix' => 'favorites'], function () {
-            Route::get('/', [FavoriteUserController::class, 'index']);
-            Route::get('/{id}', [FavoriteUserController::class, 'update']);
+            Route::get('/', [FavoriteUserController::class, 'getFavoriteUsers']);
+            Route::get('/{id}', [FavoriteUserController::class, 'updateFavoriteStatus']);
         });
         ####End Users Favorites####
 
         ####Start Users Block####
         Route::group(['prefix' => 'blocks'], function () {
-            Route::get('/', [BlockedUserController::class, 'index']);
-            Route::get('/{id}', [BlockedUserController::class, 'update']);
+            Route::get('/', [BlockedUserController::class, 'getBlockedUsers']);
+            Route::get('/{id}', [BlockedUserController::class, 'updateBlockStatus']);
         });
         ####End Users Block####
     });
