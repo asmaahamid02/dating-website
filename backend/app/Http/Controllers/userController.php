@@ -22,6 +22,12 @@ class userController extends Controller
 
     public function show($id)
     {
+        $user = User::find($id);
+
+        if ($user)
+            return $this->jsonResponse($user, 'data', Response::HTTP_OK);
+
+        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
     }
 
     public function update(Request $request, $id)
