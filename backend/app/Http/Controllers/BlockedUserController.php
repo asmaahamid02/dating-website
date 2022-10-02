@@ -20,9 +20,7 @@ class BlockedUserController extends Controller
 
     public function getBlockedUsers()
     {
-        $blocked_users = BlockedUser::where('user_id', Auth::id())
-            ->with('BlockedUsers')
-            ->get();
+        $blocked_users = Auth::user()->blocking;
 
         if ($blocked_users->isNotEmpty())
             return $this->jsonResponse($blocked_users, 'data', Response::HTTP_OK);
@@ -30,29 +28,19 @@ class BlockedUserController extends Controller
         return $this->jsonResponse('No Blocked Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    public function updateBlockStatus($blocked_user_id)
+    public function blockUser($blocked_user_id)
     {
         //get the user who will added to blocked list
-        $user = User::where('id', $blocked_user_id)->where('id', '!=', Auth::id())->first();
+        $user = User::where('id', $blocked_user_id)->where('is_visible', 1)->first();
 
         if ($user) {
-            //check if the user is in the block list
-            $blocked = BlockedUser::where('user_id', Auth::id())
-                ->where('blocked_user_id', $blocked_user_id)
-                ->first();
-
-            //if found delete it
-            if ($blocked)
-                //delete
-                $blocked->delete();
-            //else create it    
+            //check if there is a relation previousely
+            if (Auth::user()->favoriting->contains($blocked_user_id))
+                //remove it
+                Auth::user()->blocking()->detach($blocked_user_id);
             else
-                //create
-                BlockedUser::create([
-                    'user_id' => Auth::id(),
-                    'blocked_user_id' => $blocked_user_id
-                ]);
-
+                //add it
+                Auth::user()->blocking()->attach($blocked_user_id);
 
             return $this->jsonResponse('Updated Successfully', 'message', Response::HTTP_OK);
         }
