@@ -18,15 +18,20 @@ class MessageController extends Controller
     {
         $sender_id = Auth::id();
 
-        $messages = Message::where('sender_id', $sender_id)
-            ->where('receiver_id', $receiver_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $recipient = User::where('id', $receiver_id)->where('is_visible', 1)->first();
 
-        if ($messages->isNotEmpty())
-            return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
+        if ($recipient) {
+            $messages = Message::where('sender_id', $sender_id)
+                ->where('receiver_id', $receiver_id)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'No Messages');
+            if ($messages->isNotEmpty())
+                return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
+
+            return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'No Messages');
+        }
+        return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'User not found');
     }
 
     public function sendMessage(Request $request, $receiver_id)
