@@ -66,7 +66,7 @@ class AuthController extends Controller
             return $this->jsonResponse($validator->errors(), 'data', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (!$token = Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
             return $this->jsonResponse(null, 'data', Response::HTTP_UNAUTHORIZED, 'Email/Password is wrong!');
         }
         $cookie = cookie('jwt', $token, 60 * 24); //one day
