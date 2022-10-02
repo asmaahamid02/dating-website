@@ -26,7 +26,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::find($id);
+        $user = User::where('id', $id)->where('is_visible', 1)->with('profile')->first();
 
         if ($user)
             return $this->jsonResponse($user, 'data', Response::HTTP_OK);
