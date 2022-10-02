@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FavoriteUser;
+use App\Models\User;
 use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,9 @@ class FavoriteUserController extends Controller
     use ResponseJson;
     public function index()
     {
-        $favorite_users = FavoriteUser::where('user_id', Auth::id())->with('favoriteUsers')->get();
+        $favorite_users = FavoriteUser::where('user_id', Auth::id())
+            ->with('favoriteUsers')
+            ->get();
 
         if ($favorite_users->isNotEmpty())
             return $this->jsonResponse($favorite_users, 'data', Response::HTTP_OK);
@@ -21,64 +24,28 @@ class FavoriteUserController extends Controller
         return $this->jsonResponse('No Favorite Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    public function create()
+    public function update($favorite_user_id)
     {
-        //
-    }
+        $user = User::where('id', $favorite_user_id)->first();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($user) {
+            $favorited = FavoriteUser::where('user_id', Auth::id())
+                ->where('favorite_user_id', $favorite_user_id)
+                ->first();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+            if ($favorited)
+                //delete
+                $favorited->delete();
+            else
+                //create
+                FavoriteUser::create([
+                    'user_id' => Auth::id(),
+                    'favorite_user_id' => $favorite_user_id
+                ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            return $this->jsonResponse('Updated Successfully', 'message', Response::HTTP_OK);
+        }
+        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 }
