@@ -13,7 +13,7 @@ class FavoriteUserController extends Controller
     use ResponseJson;
     public function index()
     {
-        $favorite_users = FavoriteUser::where('user_id', Auth::id())->with('favoriteUser')->get();
+        $favorite_users = FavoriteUser::where('user_id', Auth::id())->with('favoriteUsers')->get();
 
         if ($favorite_users->isNotEmpty())
             return $this->jsonResponse($favorite_users, 'data', Response::HTTP_OK);
@@ -21,11 +21,6 @@ class FavoriteUserController extends Controller
         return $this->jsonResponse('No Favorite Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
