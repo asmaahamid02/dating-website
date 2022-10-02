@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FavoriteUserController extends Controller
 {
     use ResponseJson;
-    public function index()
+    public function getFavoriteUsers()
     {
         $favorite_users = FavoriteUser::where('user_id', Auth::id())
             ->with('favoriteUsers')
@@ -24,7 +24,7 @@ class FavoriteUserController extends Controller
         return $this->jsonResponse('No Favorite Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    public function update($favorite_user_id)
+    public function updateFavoriteStatus($favorite_user_id)
     {
         //get the user who will added to favorites
         $user = User::where('id', $favorite_user_id)->where('id', '!=', Auth::id())->first();
