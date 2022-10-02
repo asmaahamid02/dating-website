@@ -72,21 +72,25 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(UserProfile::class);
     }
 
+    //Get the users that favorited $this user.
     public function favoritor()
     {
         return $this->belongsToMany(User::class, 'favorite_users', 'favorite_user_id', 'user_id')->where('is_visible', 1)->withTimestamps();
     }
 
+    //Get the users that are favorited by $this user.
     public function favoriting()
     {
         return $this->belongsToMany(User::class, 'favorite_users', 'user_id', 'favorite_user_id')->where('is_visible', 1)->withTimestamps();
     }
 
+    // Get the users that blocked $this user.
     public function blocker()
     {
         return $this->belongsToMany(User::class, 'blocked_users', 'blocked_user_id', 'user_id')->where('is_visible', 1)->withTimestamps();
     }
 
+    //Get the users that are blocked by $this user.
     public function blocking()
     {
         return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_user_id')->where('is_visible', 1)->withTimestamps();
