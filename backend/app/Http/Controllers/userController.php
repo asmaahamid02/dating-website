@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BlockedUser;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Traits\ResponseJson;
@@ -10,9 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class UserController extends Controller
@@ -25,19 +22,32 @@ class UserController extends Controller
 
     public function getUsers()
     {
+
         $id = auth()->id();
         $user = User::find($id)->first();
 
+        //get the interested in gender
         $interested_in = [$user->interested_in];
         if ($user->interested_in == 'both') {
             $interested_in = ['female', 'male'];
         }
 
-        //get the users
-        $all_users =
-            User::whereIn('gender',  $interested_in)
+        //get the users who are:
+        //1- not $this user
+        //2- matched interested in gender
+        //3- visible
+        //4- not blocked by $this user
+        //5- not blocking $this user
+        //sort the result based on location
+        $all_users = User::where('id', '!=', $id)
+            ->whereIn('gender', $interested_in)
             ->where('is_visible', 1)
-            ->whereNotIn('id', $this->getMatchedIDs($id))
+            ->whereDoesntHave('blocker', function ($q) use ($id) {
+                $q->where('user_id', $id);
+            })
+            ->whereDoesntHave('blocking', function ($q) use ($id) {
+                $q->where('blocked_user_id', $id);
+            })
             ->orderBy('country')
             ->orderBy('city')
             ->get();
@@ -138,30 +148,5 @@ class UserController extends Controller
             return $this->jsonResponse('Profile Updated Successfully', 'data', Response::HTTP_OK);
         }
         return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
-    }
-
-    public function collectionToArray($collection, $attribute)
-    {
-        $array = [];
-
-        foreach ($collection as $row) {
-            $array[] = $row->$attribute;
-        }
-
-        return $array;
-    }
-
-    public function getMatchedIDs($user_id)
-    {
-        //get the users who are blocked by the logged in user
-        $blockedUsersData = BlockedUser::where('user_id', $user_id)->get('blocked_user_id');
-        $blockedUsersIDs = $this->collectionToArray($blockedUsersData, 'blocked_user_id');
-
-        //get the users who blocked the logged in user
-        $userBlockedByByData = BlockedUser::where('blocked_user_id', $user_id)->get('user_id');
-        $blockedUsersByIDs = $this->collectionToArray($userBlockedByByData, 'user_id');
-
-        //merge the blocked users by auth, the users who blocked auth, and the auth ids into one array
-        return array_merge($blockedUsersIDs, $blockedUsersByIDs, [$user_id]);
     }
 }
