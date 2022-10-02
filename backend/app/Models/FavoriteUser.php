@@ -11,12 +11,12 @@ class FavoriteUser extends Model
 
     protected $fillable = ['user_id', 'favorite_user_id'];
 
-    public function user()
+    public function users()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function favoriteUser()
+    public function favoriteUsers()
     {
         return $this->belongsTo(User::class, 'favorite_user_id');
     }
