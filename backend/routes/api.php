@@ -26,6 +26,7 @@ Route::group(['prefix' => 'v0.1'], function () {
             Route::get('/', [UserController::class, 'index']);
             Route::get('/{id}', [UserController::class, 'show']);
             Route::patch('/{id}', [UserController::class, 'update']);
+            Route::get('/all/{id}', [UserController::class, 'getInterestedInUsers']);
         });
     });
 });
