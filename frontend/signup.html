@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/styles.css">
+    <title>DateMe | Signup</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="title">Signup</h1>
+        <p class="success-message hide">Message</p>
+        <p class="error-message hide">Message</p>
+        <form action="" class="login-form" id="client">
+            <div class="input-container">
+                <input type="text" name="name" class="input" id="name" placeholder="a">
+                <label for="name" class="label">Name</label>
+            </div>
+            <p class="input-message hide" id="input-name">Message</p>
+            <div class="input-container">
+                <input type="text" name="email" class="input" id="email" placeholder="a">
+                <label for="email" class="label">E-mail</label>
+            </div>
+            <p class="input-message hide" id="input-email">Message</p>
+            <div class="flex-wrapper">
+                <div class="inner-wrapper">
+                    <div class="input-container">
+                        <select name="gender" id="gender" class="dropdown">
+                            <option value="" selected>Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="both">Both</option>
+                        </select>
+                    </div>
+                    <p class="input-message hide" id="input-gender">Message</p>
+                </div>
+                <div class="inner-wrapper">
+                    <div class="input-container">
+                        <select name="interested_in" id="interested_in" class="dropdown">
+                            <option value="" selected>Interested In</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="both">Both</option>
+                        </select>
+                    </div>
+                    <p class="input-message hide" id="input-interested">Message</p>
+                </div>
+            </div>
+            <div class="flex-wrapper">
+                <div class="inner-wrapper">
+                    <div class="input-container">
+                        <input type="text" name="country" class="input" id="country" placeholder="a">
+                        <label for="country" class="label">Country</label>
+                    </div>
+                    <p class="input-message hide" id="input-country">Message</p>
+                </div>
+                <div class="inner-wrapper">
+                    <div class="input-container">
+                        <input type="text" name="city" class="input" id="city" placeholder="a">
+                        <label for="city" class="label">City</label>
+                    </div>
+                    <p class="input-message hide" id="input-city">Message</p>
+                </div>
+            </div>
+            <div class="input-container">
+                <input type="password" name="password" class="input" id="password" placeholder="a">
+                <label for="password" class="label">Password</label>
+            </div>
+            <p class="input-message hide" id="input-password">Message</p>
+            <div class="input-container">
+                <input type="password" name="password-confirm" class="input" id="password-confirm" placeholder="a">
+                <label for="password-confirm" class="label">Confirm Password</label>
+            </div>
+            <p class="input-message hide" id="input-password-confirm">Message</p>
+            <div class="login-actions">
+                <div class="account-handle">
+                    <a href="./index.html">Have an account?</a>
+                </div>
+
+                <button class="btn btn-submit">Create Account</button>
+            </div>
+
+        </form>
+    </div>
+</body>
+
+</html>
