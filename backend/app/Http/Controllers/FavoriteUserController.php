@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FavoriteUser;
+use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class FavoriteUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    use ResponseJson;
     public function index()
     {
-        //
+        $favorite_users = FavoriteUser::where('user_id', Auth::id())->with('favoriteUser')->get();
+
+        if ($favorite_users->isNotEmpty())
+            return $this->jsonResponse($favorite_users, 'data', Response::HTTP_OK);
+
+        return $this->jsonResponse('No Favorite Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
     /**
