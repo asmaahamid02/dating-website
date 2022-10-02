@@ -13,14 +13,19 @@ use Symfony\Component\HttpFoundation\Response;
 class MessageController extends Controller
 {
     use ResponseJson;
-
-    public function getMessages($receiver_id)
+    public function __construct()
     {
-        $sender_id = Auth::id();
+        $this->middleware('auth:api');
+    }
 
+    public function getMessages($sender_id, $receiver_id)
+    {
+        // $sender_id = auth()->id();
+
+        $sender = User::where('id', $sender_id)->where('is_visible', 1)->first();
         $recipient = User::where('id', $receiver_id)->where('is_visible', 1)->first();
 
-        if ($recipient) {
+        if ($recipient && $sender) {
             $messages = Message::where('sender_id', $sender_id)
                 ->where('receiver_id', $receiver_id)
                 ->orderBy('created_at', 'desc')
@@ -31,7 +36,7 @@ class MessageController extends Controller
 
             return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'No Messages');
         }
-        return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'User not found');
+        return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'Users not found');
     }
 
     public function sendMessage(Request $request, $receiver_id)
@@ -46,14 +51,15 @@ class MessageController extends Controller
         }
 
         $sender_id = Auth::id();
+
         $message = $request->message;
         $recipient = User::where('id', $receiver_id)->where('is_visible', 1)->first();
 
         if ($recipient) {
             Message::create([
-                'sender_id', $sender_id,
-                'receiver_id', $receiver_id,
-                'message', $message
+                'sender_id' => $sender_id,
+                'receiver_id' => $receiver_id,
+                'message' => $message
             ]);
 
             return $this->jsonResponse($message, 'data', Response::HTTP_OK);
