@@ -19,9 +19,7 @@ class FavoriteUserController extends Controller
 
     public function getFavoriteUsers()
     {
-        $favorite_users = FavoriteUser::where('user_id', Auth::id())
-            ->with('favoriteUsers')
-            ->get();
+        $favorite_users = Auth::user()->favoriting;
 
         if ($favorite_users->isNotEmpty())
             return $this->jsonResponse($favorite_users, 'data', Response::HTTP_OK);
@@ -29,29 +27,19 @@ class FavoriteUserController extends Controller
         return $this->jsonResponse('No Favorite Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    public function updateFavoriteStatus($favorite_user_id)
+    public function favoriteUser($favorite_user_id)
     {
-        //get the user who will added to favorites
-        $user = User::where('id', $favorite_user_id)->where('id', '!=', Auth::id())->first();
+        //check the user if it is existed
+        $user = User::where('id', $favorite_user_id)->where('is_visible', 1)->first();
 
         if ($user) {
-            //check if the user is in the favorites list
-            $favorited = FavoriteUser::where('user_id', Auth::id())
-                ->where('favorite_user_id', $favorite_user_id)
-                ->first();
-
-            //if found delete it
-            if ($favorited)
-                //delete
-                $favorited->delete();
-            //else create it    
+            //check if there is a relation previousely
+            if (Auth::user()->favoriting->contains($favorite_user_id))
+                //remove it
+                Auth::user()->favoriting()->detach($favorite_user_id);
             else
-                //create
-                FavoriteUser::create([
-                    'user_id' => Auth::id(),
-                    'favorite_user_id' => $favorite_user_id
-                ]);
-
+                //add it
+                Auth::user()->favoriting()->attach($favorite_user_id);
 
             return $this->jsonResponse('Updated Successfully', 'message', Response::HTTP_OK);
         }
