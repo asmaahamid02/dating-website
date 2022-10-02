@@ -12,7 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 class BlockedUserController extends Controller
 {
     use ResponseJson;
-    public function index()
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
+    public function getBlockedUsers()
     {
         $blocked_users = BlockedUser::where('user_id', Auth::id())
             ->with('BlockedUsers')
@@ -24,7 +30,7 @@ class BlockedUserController extends Controller
         return $this->jsonResponse('No Blocked Users', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    public function update($blocked_user_id)
+    public function updateBlockStatus($blocked_user_id)
     {
         //get the user who will added to blocked list
         $user = User::where('id', $blocked_user_id)->where('id', '!=', Auth::id())->first();
