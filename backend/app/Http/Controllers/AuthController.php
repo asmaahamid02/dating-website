@@ -66,10 +66,11 @@ class AuthController extends Controller
 
             $result = [
                 'user' => $user,
-                'token' => $token,
+                // 'token' => $token,
             ];
 
-            return $this->jsonResponse($result, 'data', Response::HTTP_ACCEPTED);
+            $cookie = cookie('jwt', $token, 60 * 24); //one day
+            return $this->jsonResponse($result, 'data', Response::HTTP_ACCEPTED)->withCookie($cookie);
         }
 
         return $this->jsonResponse('UnAuthorized', 'data', Response::HTTP_UNAUTHORIZED, 'Email/Password is wrong!');
