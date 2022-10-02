@@ -23,7 +23,7 @@ class UserController extends Controller
         if ($users->isNotEmpty())
             return $this->jsonResponse($users, 'data', Response::HTTP_OK);
 
-        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
+        return $this->jsonResponse('Users not found', 'error', Response::HTTP_NOT_FOUND);
     }
 
     public function show($id)
@@ -36,7 +36,7 @@ class UserController extends Controller
         if ($user)
             return $this->jsonResponse($user, 'data', Response::HTTP_OK);
 
-        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
+        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 
     public function update(Request $request, $id)
@@ -55,7 +55,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->jsonResponse($validator->errors(), 'data', Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->jsonResponse($validator->errors(), 'message', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $user = User::find($id);
@@ -113,9 +113,9 @@ class UserController extends Controller
                     Storage::disk('public')->put('users/profiles/' . $imageName, base64_decode($file_data));
             }
 
-            return $this->jsonResponse($user, 'data', Response::HTTP_OK, 'Profile Updated Successfully');
+            return $this->jsonResponse('Profile Updated Successfully', 'data', Response::HTTP_OK);
         }
-        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND, 'User not found');
+        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 
     public function getInterestedInUsers($id)
@@ -137,8 +137,8 @@ class UserController extends Controller
             if ($all_users->isNotEmpty())
                 return $this->jsonResponse($all_users, 'data', Response::HTTP_OK);
 
-            return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
+            return $this->jsonResponse('Users not found', 'message', Response::HTTP_NOT_FOUND);
         }
-        return $this->jsonResponse('Request not found', 'error', Response::HTTP_NOT_FOUND);
+        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 }
