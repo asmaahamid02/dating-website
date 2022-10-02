@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
+
+    public function favoritedUser()
+    {
+        return $this->hasMany(Favorite::class, 'favorite_user_id');
+    }
+
+    public function favoritedUserBy()
+    {
+        return $this->hasMany(Favorite::class, 'user_id');
+    }
 }
