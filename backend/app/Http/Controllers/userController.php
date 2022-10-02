@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -16,14 +17,28 @@ class UserController extends Controller
     use ResponseJson;
     public function index()
     {
-        $users = User::where('is_visible', 1)
-            ->with('profile')
-            ->get();
+        $id = Auth::id();
+        $user = User::where('id', $id)->first();
 
-        if ($users->isNotEmpty())
-            return $this->jsonResponse($users, 'data', Response::HTTP_OK);
+        if ($user) {
+            $interested_in = [$user->interested_in];
+            if ($user->interested_in == 'both') {
+                $interested_in = ['female', 'male'];
+            }
+            $all_users =
+                User::whereIn('gender',  $interested_in)
+                ->where('is_visible', 1)
+                ->where('id', '!=', $id)
+                ->orderBy('country')
+                ->orderBy('city')
+                ->get();
 
-        return $this->jsonResponse('Users not found', 'error', Response::HTTP_NOT_FOUND);
+            if ($all_users->isNotEmpty())
+                return $this->jsonResponse($all_users, 'data', Response::HTTP_OK);
+
+            return $this->jsonResponse('Users not found', 'message', Response::HTTP_NOT_FOUND);
+        }
+        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 
     public function show($id)
@@ -35,12 +50,12 @@ class UserController extends Controller
 
         if ($user)
             return $this->jsonResponse($user, 'data', Response::HTTP_OK);
-
         return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
+        $id = Auth::id();
         $validator = Validator::make($request->all(), [
             'nickname' => 'min:5',
             'age' => 'numeric',
@@ -114,30 +129,6 @@ class UserController extends Controller
             }
 
             return $this->jsonResponse('Profile Updated Successfully', 'data', Response::HTTP_OK);
-        }
-        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
-    }
-
-    public function getInterestedInUsers($id)
-    {
-        $user = User::where('id', $id)->where('is_visible', 1)->first();
-
-        if ($user) {
-            $interested_in = [$user->interested_in];
-            if ($user->interested_in == 'both') {
-                $interested_in = ['female', 'male'];
-            }
-            $all_users =
-                User::whereIn('gender',  $interested_in)
-                ->where('is_visible', 1)
-                ->orderBy('country')
-                ->orderBy('city')
-                ->get();
-
-            if ($all_users->isNotEmpty())
-                return $this->jsonResponse($all_users, 'data', Response::HTTP_OK);
-
-            return $this->jsonResponse('Users not found', 'message', Response::HTTP_NOT_FOUND);
         }
         return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
