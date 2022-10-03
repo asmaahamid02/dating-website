@@ -12,10 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 class FavoriteUserController extends Controller
 {
     use ResponseJson;
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
 
     public function getFavoriteUsers()
     {

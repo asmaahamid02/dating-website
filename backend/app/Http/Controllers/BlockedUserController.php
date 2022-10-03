@@ -13,11 +13,6 @@ class BlockedUserController extends Controller
 {
     use ResponseJson;
 
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     public function getBlockedUsers()
     {
         $blocked_users = Auth::user()->blocking;

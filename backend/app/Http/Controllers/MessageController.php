@@ -13,26 +13,29 @@ use Symfony\Component\HttpFoundation\Response;
 class MessageController extends Controller
 {
     use ResponseJson;
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
 
     public function getMessages($sender_id, $receiver_id)
     {
         // $sender_id = auth()->id();
-
         $sender = User::where('id', $sender_id)->where('is_visible', 1)->first();
         $recipient = User::where('id', $receiver_id)->where('is_visible', 1)->first();
 
         if ($recipient && $sender) {
-            $messages = Message::where('sender_id', $sender_id)
-                ->where('receiver_id', $receiver_id)
-                ->orderBy('created_at', 'desc')
-                ->get();
 
-            if ($messages->isNotEmpty())
-                return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
+            $messages = User::whereHas('sender', function ($q) use ($sender_id) {
+                $q->where('sender_id', $sender_id);
+            })->whereHas('receiver', function ($q) use ($receiver_id) {
+                $q->where('receiver_id', $receiver_id);
+            })->get();
+
+            return $messages;
+            // $messages = User::whereHas('sender', $sender_id)
+            //     ->where('receiver_id', $receiver_id)
+            //     ->orderBy('created_at', 'desc')
+            //     ->get();
+
+            // if ($messages->isNotEmpty())
+            //     return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
 
             return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'No Messages');
         }
