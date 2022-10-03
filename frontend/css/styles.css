@@ -256,7 +256,8 @@ li > a {
   text-align: center;
 }
 
-.card > h3 {
+.card > h3,
+.user > h3 {
   font-size: 25px;
   cursor: pointer;
 }
@@ -301,4 +302,46 @@ li > a {
 .btn-block > img {
   filter: invert(11%) sepia(92%) saturate(7051%) hue-rotate(2deg)
     brightness(88%) contrast(88%);
+}
+
+/*Messages*/
+.messages-container {
+  padding: 100px 50px;
+}
+
+.messages {
+  display: flex;
+  justify-content: space-between;
+}
+
+.users {
+  width: 30%;
+}
+
+.chat {
+  border: 1px solid black;
+  padding: 10px;
+  width: 65%;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+}
+
+.receiver {
+  align-self: flex-start;
+}
+
+.sender {
+  align-self: flex-end;
+}
+
+.send-message {
+  display: flex;
+}
+
+.send-message > input {
+  width: 90%;
 }
