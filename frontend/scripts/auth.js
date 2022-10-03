@@ -72,6 +72,7 @@ const login = () => {
         const userData = {
           id: response.data.id,
           name: response.data.name,
+          token: response.data.token,
         }
 
         //strore user data in localStorage
