@@ -70,7 +70,7 @@ class AuthController extends Controller
             return $this->jsonResponse(null, 'data', Response::HTTP_UNAUTHORIZED, 'Email/Password is wrong!');
         }
         $cookie = cookie('jwt', $token, 60 * 24); //one day
-        return $this->jsonResponse(auth()->user(), 'data', Response::HTTP_OK)->withCookie($cookie);
+        return $this->jsonResponse(auth()->user(), 'data', Response::HTTP_OK, 'Logged In Successfully')->withCookie($cookie);
     }
 
     public function logout()
