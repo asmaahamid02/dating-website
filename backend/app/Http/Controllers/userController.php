@@ -44,6 +44,7 @@ class UserController extends Controller
             ->whereDoesntHave('blocking', function ($q) use ($id) {
                 $q->where('blocked_user_id', $id);
             })
+            ->with('profile')
             ->orderBy('country')
             ->orderBy('city')
             ->get();
