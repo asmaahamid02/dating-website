@@ -95,4 +95,14 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(User::class, 'blocked_users', 'user_id', 'blocked_user_id')->where('is_visible', 1)->withTimestamps();
     }
+
+    public function sender()
+    {
+        return $this->belongsToMany(User::class, 'messages', 'receiver_id', 'sender_id')->where('is_visible', 1)->withTimestamps()->withPivot('message');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsToMany(User::class, 'messages', 'sender_id', 'receiver_id')->where('is_visible', 1)->withTimestamps()->withPivot('message')->orderBy('messages.created_at', 'desc');
+    }
 }
