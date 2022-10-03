@@ -93,6 +93,79 @@ const login = () => {
   })
 }
 
+const inputs = Array.from(
+  document.querySelectorAll('.input-container > :first-child')
+)
+
+const error_messages = Array.from(document.querySelectorAll('.input-message'))
+
+const signup = () => {
+  signup_form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    //validate inputs
+    let flag = true
+    for (let i = 0; i < inputs.length; i++) {
+      if (
+        !validations.isNotEmpty(inputs[i], error_messages[i], inputs[i].name) ||
+        (inputs[i].name == 'password' &&
+          !validations.strongPassword(
+            inputs[i],
+            error_messages[i],
+            inputs[i].name
+          )) ||
+        (inputs[i].name == 'email' &&
+          !validations.validEmail(inputs[i], error_messages[i])) ||
+        (inputs[i].name == 'password-confirm' &&
+          !validations.checkPasswordMatch(
+            password,
+            inputs[i],
+            error_messages[i]
+          ))
+      ) {
+        flag = false
+        break
+      }
+    }
+
+    if (!flag) {
+      return
+    } else {
+      let userData = {}
+      for (let j = 0; j < inputs.length; j++) {
+        if (inputs[j].name == 'password-confirm') continue
+
+        userData[inputs[j].name] = inputs[j].value
+      }
+
+      const response = await common.postAPI(
+        `${common.baseURL}/register`,
+        userData
+      )
+
+      if (response.statusCode < 400) {
+        //success
+
+        //display success message
+        success_message.innerText = response.message
+        error_message.classList.add('hide')
+        success_message.classList.remove('hide')
+
+        //move to the homepage
+        common.changeRoute('index.html')
+      } else {
+        //error
+        if (response.data && response.data.email) {
+          error_message.innerText = response.data.email
+        } else {
+          error_message.innerText = response.message
+        }
+        success_message.classList.add('hide')
+        error_message.classList.remove('hide')
+      }
+    }
+  })
+}
+
 if (login_form) {
   //to remove the error marks upon writing
   validations.removeErrorMessages(login_form)
