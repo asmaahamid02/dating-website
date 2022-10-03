@@ -23,6 +23,7 @@ const blockUser = (id) => async () => {
 const chat_container = document.querySelector('.chat-container')
 
 const getMessages = (receiver_id) => async () => {
+  chat_container.innerHTML = ''
   localStorage.setItem('receiver_id', receiver_id)
   const response = await common.getAPI(
     `${common.baseURL}/messages/${common.userID}/${receiver_id}`,
