@@ -23,8 +23,22 @@ common.getAPI = async (api_url) => {
 
 common.postAPI = async (api_url, api_data) => {
   try {
-    return await axios.post(api_url, api_data)
+    const response = await axios.post(api_url, api_data)
+    return response.data
   } catch (error) {
-    common.Console('Error from POST API', [error])
+    // common.Console('Error from POST API', [error])
+    return error.response.data
   }
+}
+
+common.refresh = () => {
+  setTimeout(function () {
+    window.location.reload()
+  }, 1000)
+}
+
+common.changeRoute = (page) => {
+  setTimeout(function () {
+    window.location.href = page
+  }, 1000)
 }
