@@ -45,7 +45,7 @@ ul {
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Helvetica, Arial, sans-serif;
-  background-color: #64c5b1;
+  background-color: #b364c5;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -80,7 +80,7 @@ body {
 }
 
 .success-message {
-  color: #64c5b1;
+  color: #b364c5;
 }
 
 .hide {
@@ -141,12 +141,12 @@ body {
   left: 3px;
   z-index: 10;
   font-size: 14px;
-  color: #64c5b1;
+  color: #b364c5;
   font-weight: 600;
 }
 
 .input:focus {
-  border: 2px solid #64c5b1;
+  border: 2px solid #b364c5;
 }
 
 .input:not(:placeholder-shown) + .label {
@@ -159,7 +159,7 @@ body {
 
 .login-actions {
   display: flex;
-  color: #64c5b1;
+  color: #b364c5;
   font-size: 12px;
   align-items: center;
 }
@@ -179,7 +179,7 @@ body {
   margin-left: auto;
   padding: 15px 30px;
   border: none;
-  background-color: #64c5b1;
+  background-color: #b364c5;
   color: #fff;
   border-radius: 6px;
   cursor: pointer;
@@ -188,7 +188,7 @@ body {
 }
 
 .btn-submit:hover {
-  background-color: rgb(100, 197, 177, 0.8);
+  background-color: rgb(179, 100, 197, 0.8);
   transform: scale(0.9);
   transition: transform 0.2s;
 }
@@ -220,4 +220,8 @@ body {
   padding: 0 20px;
   font-size: 16px;
   background: none;
+}
+
+.red-border {
+  border: 1px solid red;
 }
