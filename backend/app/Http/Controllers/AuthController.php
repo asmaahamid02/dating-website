@@ -15,11 +15,6 @@ class AuthController extends Controller
 {
     use ResponseJson;
 
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
-
     public function register(Request $request)
     {
         //validate the input data
@@ -69,14 +64,14 @@ class AuthController extends Controller
         if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
             return $this->jsonResponse(null, 'data', Response::HTTP_UNAUTHORIZED, 'Email/Password is wrong!');
         }
-        $cookie = cookie('jwt', $token, 60 * 24); //one day
-        return $this->jsonResponse(auth()->user(), 'data', Response::HTTP_OK, 'Logged In Successfully')->withCookie($cookie);
+        $user = Auth::user();
+        $user->token = $token;
+        return $this->jsonResponse($user, 'data', Response::HTTP_OK, 'Logged In Successfully');
     }
 
     public function logout()
     {
-        $cookie = Cookie::forget('jwt');
         auth()->logout();
-        return $this->jsonResponse('Logging Out', 'data', Response::HTTP_OK, 'Logged Out Successfully')->withCookie($cookie);
+        return $this->jsonResponse('Logging Out', 'data', Response::HTTP_OK, 'Logged Out Successfully');
     }
 }

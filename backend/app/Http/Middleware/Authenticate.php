@@ -19,16 +19,4 @@ class Authenticate extends Middleware
             return route('login');
         }
     }
-
-    public function handle($request, Closure $next, ...$guards)
-    {
-        //get the jwt token and put it in the header from the cookie
-        //without having the frontend to store it
-        if ($jwt = $request->cookie('jwt')) {
-            $request->headers->set('Authorization', 'Bearer ' . $jwt);
-        }
-        $this->authenticate($request, $guards);
-
-        return $next($request);
-    }
 }

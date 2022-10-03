@@ -42,3 +42,20 @@ common.changeRoute = (page) => {
     window.location.href = page
   }, 1000)
 }
+
+common.userID = localStorage.getItem('user')
+  ? JSON.parse(localStorage.getItem('user')).id
+  : null
+
+common.pathName = window.location.pathname
+common.fileName = common.pathName.substring(
+  common.pathName.lastIndexOf('/') + 1
+)
+
+if (
+  !common.userID &&
+  common.fileName != 'index.html' &&
+  common.fileName != 'signup.html'
+) {
+  common.changeRoute('index.html')
+}
