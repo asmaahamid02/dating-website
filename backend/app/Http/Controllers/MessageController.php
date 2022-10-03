@@ -38,6 +38,8 @@ class MessageController extends Controller
 
     public function sendMessage(Request $request, $receiver_id)
     {
+        //get the user to be messaged
+        $user = User::where('id', $receiver_id)->where('is_visible', 1)->first();
 
         $validator = Validator::make($request->all(), [
             'message' => 'required|min:1'
@@ -47,21 +49,12 @@ class MessageController extends Controller
             return $this->jsonResponse($validator->errors(), 'data', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $sender_id = Auth::id();
+        if ($user) {
+            //add it
+            Auth::user()->receiver()->attach($receiver_id, ['message' => $request->message]);
 
-        $message = $request->message;
-        $recipient = User::where('id', $receiver_id)->where('is_visible', 1)->first();
-
-        if ($recipient) {
-            Message::create([
-                'sender_id' => $sender_id,
-                'receiver_id' => $receiver_id,
-                'message' => $message
-            ]);
-
-            return $this->jsonResponse($message, 'data', Response::HTTP_OK);
+            return $this->jsonResponse('Sent Successfully', 'message', Response::HTTP_OK);
         }
-
-        return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'User not found');
+        return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
 }
