@@ -218,10 +218,35 @@ ul {
 }
 
 /*Home page*/
+.navbar {
+  position: fixed;
+  width: 100%;
+  background-color: #b364c5;
+  height: 80px;
+}
+
+.navbar > ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 50px;
+}
+
+ul > li {
+  color: #fff;
+}
+
+li > a {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .cards-container {
   display: flex;
   flex-flow: wrap row;
   justify-content: space-around;
+  padding-top: 100px;
 }
 
 .card {
