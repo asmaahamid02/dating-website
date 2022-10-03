@@ -61,7 +61,7 @@ const createProfileCard = (user) => {
   newElement.appendChild(child)
 
   //block action
-  newElement.addEventListener('click', () => {})
+  newElement.addEventListener('click', blockUser(`${user.id}`))
 
   element.appendChild(newElement)
 
