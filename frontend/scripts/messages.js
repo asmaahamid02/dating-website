@@ -16,7 +16,7 @@ getUsers()
 send_button.addEventListener('click', async () => {
   receiver_id = JSON.parse(localStorage.getItem('receiver_id'))
   const response = await common.postAPI(
-    `${common.baseURL}/send/${receiver_id}`,
+    `${common.baseURL}/messages/send/${receiver_id}`,
     { message: message.value },
     common.token
   )

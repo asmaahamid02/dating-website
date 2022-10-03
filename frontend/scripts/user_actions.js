@@ -25,7 +25,7 @@ const chat_container = document.querySelector('.chat-container')
 const getMessages = (receiver_id) => async () => {
   localStorage.setItem('receiver_id', receiver_id)
   const response = await common.getAPI(
-    `${common.baseURL}/${common.userID}/${receiver_id}`,
+    `${common.baseURL}/messages/${common.userID}/${receiver_id}`,
     common.token
   )
   response.data.forEach((user) => {

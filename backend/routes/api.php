@@ -1,18 +1,18 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlockedUserController;
 use App\Http\Controllers\FavoriteUserController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'v0.1'], function () {
-    Route::group(['middleware' => 'api'], function () {
-        Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
-        Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
-        Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('/logout', [AuthController::class, 'logout']);
 
         ####Start Users Group####
         Route::group(['prefix' => 'users'], function () {
@@ -39,7 +39,7 @@ Route::group(['prefix' => 'v0.1'], function () {
         ####Start Messages####
         Route::group(['prefix' => 'messages'], function () {
             Route::get('/{sender_id}/{receiver_id}', [MessageController::class, 'getMessages']);
-            Route::get('/send/{receiver_id}', [MessageController::class, 'sendMessage']);
+            Route::post('/send/{receiver_id}', [MessageController::class, 'sendMessage']);
         });
         ####End Messages####
     });
