@@ -21,7 +21,9 @@ const blockUser = (id) => async () => {
 }
 
 const chat_container = document.querySelector('.chat-container')
+
 const getMessages = (receiver_id) => async () => {
+  localStorage.setItem('receiver_id', receiver_id)
   const response = await common.getAPI(
     `${common.baseURL}/${common.userID}/${receiver_id}`,
     common.token
@@ -42,5 +44,3 @@ const getMessages = (receiver_id) => async () => {
     }
   })
 }
-
-const sendMessage = receiver_id
