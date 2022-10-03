@@ -22,20 +22,14 @@ class MessageController extends Controller
 
         if ($recipient && $sender) {
 
-            $messages = User::whereHas('sender', function ($q) use ($sender_id) {
-                $q->where('sender_id', $sender_id);
-            })->whereHas('receiver', function ($q) use ($receiver_id) {
-                $q->where('receiver_id', $receiver_id);
-            })->get();
+            $messages = User::whereHas('sender', function ($q) use ($sender_id, $receiver_id) {
+                $q->where('sender_id', $sender_id)->where('receiver_id', $receiver_id);
+            })->orWhereHas('receiver', function ($q) use ($sender_id, $receiver_id) {
+                $q->where('sender_id', $sender_id)->where('receiver_id', $receiver_id);
+            })->with('profile')->with('sender')->get();
 
-            return $messages;
-            // $messages = User::whereHas('sender', $sender_id)
-            //     ->where('receiver_id', $receiver_id)
-            //     ->orderBy('created_at', 'desc')
-            //     ->get();
-
-            // if ($messages->isNotEmpty())
-            //     return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
+            if ($messages->isNotEmpty())
+                return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
 
             return $this->jsonResponse(null, 'data', Response::HTTP_NOT_FOUND, 'No Messages');
         }
