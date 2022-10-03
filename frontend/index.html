@@ -14,12 +14,12 @@
         <h1 class="title">Login</h1>
         <p class="success-message hide">Message</p>
         <p class="error-message hide">Message</p>
-        <form action="" class="login-form" id="client">
+        <form class="login-form" id="login">
             <div class="input-container">
-                <input type="text" name="username" class="input" id="username" placeholder="a">
-                <label for="name" class="label">Email</label>
+                <input type="text" name="email" class="input" id="email" placeholder="a">
+                <label for="email" class="label">Email</label>
             </div>
-            <p class="input-message hide" id="input-username">Message</p>
+            <p class="input-message hide" id="input-email">Message</p>
             <div class="input-container">
                 <input type="password" name="password" class="input" id="password" placeholder="a">
                 <label for="password" class="label">Password</label>
@@ -27,7 +27,7 @@
             <p class="input-message hide" id="input-password">Message</p>
             <div class="login-actions">
                 <div class="account-handle">
-                    <a href="#">Forget password?</a>
+                    <!-- <a href="#">Forget password?</a> -->
                     <a href="./signup.html">Don't have an account?</a>
                 </div>
 
@@ -36,6 +36,12 @@
 
         </form>
     </div>
+
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+    <script src="./scripts/axios.min.js"></script>
+    <script src="./scripts/script.js"></script>
+    <script src="./scripts/validations.js"></script>
+    <script src="./scripts/auth.js"></script>
 </body>
 
 </html>
