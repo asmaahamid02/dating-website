@@ -14,12 +14,12 @@ common.Console = (title, values) => {
 
 common.getAPI = async (api_url, token = null) => {
   try {
-    const data = await axios.get(api_url, {
+    const response = await axios.get(api_url, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-    return data.data
+    return response.data
   } catch (error) {
     common.Console('Error from GET API', [error])
   }
