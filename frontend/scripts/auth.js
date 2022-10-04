@@ -1,11 +1,16 @@
 const login_form = document.getElementById('login')
 const signup_form = document.getElementById('signup')
+const edit_profile_form = document.getElementById('edit-profile')
 const password = document.getElementById('password')
 const success_message = document.querySelector('.success-message')
 const error_message = document.querySelector('.error-message')
 const inputs = Array.from(
   document.querySelectorAll('.input-container > :first-child')
 )
+if (edit_profile_form) {
+  inputs.push(document.getElementById('is_visible'))
+}
+
 const error_messages = Array.from(document.querySelectorAll('.input-message'))
 
 //stop the page from auto-reload
@@ -72,9 +77,11 @@ const login = () => {
         const userData = {
           id: response.data.id,
           name: response.data.name,
+          picture: response.data.profile
+            ? response.data.profile.profile_picture
+            : null,
           token: response.data.token,
         }
-
         //strore user data in localStorage
         localStorage.setItem('__DateUser', JSON.stringify(userData))
 
@@ -134,8 +141,40 @@ if (login_form) {
   //to remove the error marks upon writing
   validations.removeErrorMessages(login_form)
   login()
-} else {
+} else if (signup_form) {
   //to remove the error marks upon writing
   validations.removeErrorMessages(signup_form)
   signup()
+} else {
+  //to remove the error marks upon writing
+  validations.removeErrorMessages(edit_profile_form)
+  // editProfile()
 }
+
+const fillEditForm = async () => {
+  const response = await common.getAPI(
+    `${common.baseURL}/users/${common.userID}`,
+    common.token
+  )
+
+  inputs.forEach((input) => {
+    console.log(input)
+    const inputValue = response.data[input.name]
+      ? response.data[input.name]
+      : response.data.profile[input.name]
+    if (
+      (input.classList.contains('input') || input.id == 'is_visible') &&
+      input.type != 'file'
+    ) {
+      input.value = inputValue
+    }
+    if (input.type == 'checkbox') {
+      console.log('jhsfdjsdfnb')
+      input.checked = inputValue
+    }
+  })
+
+  console.log(response)
+}
+
+fillEditForm()
