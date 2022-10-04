@@ -45,6 +45,7 @@ class UserController extends Controller
                 $q->where('blocked_user_id', $id);
             })
             ->with('profile')
+            ->with('favoritor')
             ->orderBy('country')
             ->orderBy('city')
             ->get();
