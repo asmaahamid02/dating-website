@@ -18,7 +18,7 @@ Route::group(['prefix' => 'v0.1'], function () {
         Route::group(['prefix' => 'users'], function () {
             Route::get('/', [UserController::class, 'getUsers']);
             Route::get('/{id}', [UserController::class, 'show']);
-            Route::patch('/', [UserController::class, 'update']);
+            Route::post('/edit', [UserController::class, 'update']);
         });
         ####End Users Group####
 

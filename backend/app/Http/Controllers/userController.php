@@ -143,7 +143,7 @@ class UserController extends Controller
                     Storage::disk('public')->put('users/profiles/' . $imageName, base64_decode($file_data));
             }
 
-            return $this->jsonResponse('Profile Updated Successfully', 'data', Response::HTTP_OK);
+            return $this->jsonResponse($user_profile, 'data', Response::HTTP_OK, 'Profile Updated Successfully');
         }
         return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }

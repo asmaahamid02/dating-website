@@ -137,6 +137,43 @@ const signup = () => {
   })
 }
 
+// edit profile function
+const editProfile = () => {
+  edit_profile_form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    //validate inputs
+
+    // if (!validateInputs()) {
+    //   //prevented
+    //   displayErrorMessage('Fields are not valid')
+    //   e.preventDefault()
+    // } else {
+    let userData = new FormData(edit_profile_form)
+    const response = await common.postAPI(
+      `${common.baseURL}/edit`,
+      userData,
+      common.token
+    )
+
+    console.log(response)
+    if (response.statusCode < 400) {
+      //success
+      displaySuccessMessage(response.message)
+
+      //move to the login page
+      common.changeRoute('index.html')
+    } else {
+      //error
+      displayErrorMessage(
+        response.data && response.data.email
+          ? response.data.email
+          : response.message
+      )
+    }
+    // }
+  })
+}
+
 if (login_form) {
   //to remove the error marks upon writing
   validations.removeErrorMessages(login_form)
@@ -148,7 +185,7 @@ if (login_form) {
 } else {
   //to remove the error marks upon writing
   validations.removeErrorMessages(edit_profile_form)
-  // editProfile()
+  editProfile()
 }
 
 const fillEditForm = async () => {
@@ -158,23 +195,32 @@ const fillEditForm = async () => {
   )
 
   inputs.forEach((input) => {
-    console.log(input)
+    //get the value
     const inputValue = response.data[input.name]
       ? response.data[input.name]
       : response.data.profile[input.name]
+
+    //fill the inputs (texts)
     if (
       (input.classList.contains('input') || input.id == 'is_visible') &&
       input.type != 'file'
     ) {
       input.value = inputValue
     }
+
+    //check checkbox
     if (input.type == 'checkbox') {
-      console.log('jhsfdjsdfnb')
       input.checked = inputValue
     }
-  })
 
-  console.log(response)
+    //selected option
+    if (input.name == 'gender' || input.name == 'interested_in') {
+      const selectedIndex = document.querySelector(
+        `#${input.id} option[value="${inputValue}"]`
+      ).index
+      input.options.selectedIndex = selectedIndex
+    }
+  })
 }
 
 fillEditForm()
