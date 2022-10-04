@@ -165,15 +165,21 @@ ul {
   margin-top: 10px;
 }
 
+.btn {
+  border: none;
+  outline: 0;
+  text-align: center;
+  cursor: pointer;
+  cursor: pointer;
+}
+
 .btn-submit {
   display: block;
   margin-left: auto;
   padding: 15px 30px;
-  border: none;
   background-color: #b364c5;
   color: #fff;
   border-radius: 6px;
-  cursor: pointer;
   margin-top: 30px;
   font-size: 16px;
 }
@@ -244,9 +250,9 @@ li > a {
 
 .cards-container {
   display: flex;
+  justify-content: center;
   flex-flow: wrap row;
-  justify-content: space-around;
-  padding-top: 100px;
+  padding: 100px 50px 10px 50px;
 }
 
 .card {
@@ -272,21 +278,15 @@ li > a {
   font-size: 18px;
 }
 
-.options {
+.actions {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  padding: 10px 50px;
 }
 
-.btn {
-  border: none;
-  outline: 0;
-  padding: 8px;
-  text-align: center;
-  cursor: pointer;
-  font-size: 18px;
+.btn-fav,
+.btn-block {
   background-color: transparent;
-  cursor: pointer;
 }
 
 .btn > img {
