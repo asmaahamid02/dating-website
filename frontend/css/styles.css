@@ -458,3 +458,23 @@ li > a {
   margin: 10px auto;
   color: #b364c5;
 }
+
+/*profile page*/
+.edit-container {
+  width: 600px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 65px;
+}
+
+.flex > input {
+  margin-right: 5px;
+}
+
+.flex {
+  font-size: 14px;
+}
