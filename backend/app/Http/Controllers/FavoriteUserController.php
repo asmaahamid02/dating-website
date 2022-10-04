@@ -30,14 +30,14 @@ class FavoriteUserController extends Controller
 
         if ($user) {
             //check if there is a relation previousely
-            if (Auth::user()->favoriting->contains($favorite_user_id))
+            if (Auth::user()->favoriting->contains($favorite_user_id)) {
                 //remove it
                 Auth::user()->favoriting()->detach($favorite_user_id);
-            else
+            } else
                 //add it
                 Auth::user()->favoriting()->attach($favorite_user_id);
 
-            return $this->jsonResponse('Updated Successfully', 'message', Response::HTTP_OK);
+            return $this->jsonResponse(null, 'data', Response::HTTP_OK, 'Updated Successfully');
         }
         return $this->jsonResponse('User not found', 'message', Response::HTTP_NOT_FOUND);
     }
