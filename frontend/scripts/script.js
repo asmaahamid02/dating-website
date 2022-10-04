@@ -21,7 +21,7 @@ common.getAPI = async (api_url, token = null) => {
     })
     return response.data
   } catch (error) {
-    common.Console('Error from GET API', [error])
+    return error.response.data
   }
 }
 
