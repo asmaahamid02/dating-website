@@ -179,7 +179,15 @@ const editProfile = () => {
     //   e.preventDefault()
     // } else {
     let userData = new FormData(edit_profile_form)
-    userData.set('profile_picture', base64_image)
+    document.getElementById('profile_picture').files.length
+      ? userData.set('profile_picture', base64_image)
+      : userData.delete('profile_picture')
+    userData.set(
+      'is_visible',
+      document.getElementById('is_visible').checked ? 1 : 0
+    )
+
+    console.log([...userData])
     const response = await common.postAPI(
       `${common.baseURL}/users/edit`,
       userData,
@@ -225,33 +233,35 @@ const fillEditForm = async () => {
     common.token
   )
 
-  inputs.forEach((input) => {
-    //get the value
-    const inputValue = response.data[input.name]
-      ? response.data[input.name]
-      : response.data.profile[input.name]
+  if (response.statusCode < 400) {
+    inputs.forEach((input) => {
+      //get the value
+      const inputValue = response.data[input.name]
+        ? response.data[input.name]
+        : response.data.profile[input.name]
 
-    //fill the inputs (texts)
-    if (
-      (input.classList.contains('input') || input.id == 'is_visible') &&
-      input.type != 'file'
-    ) {
-      input.value = inputValue
-    }
+      //fill the inputs (texts)
+      if (
+        (input.classList.contains('input') || input.id == 'is_visible') &&
+        input.type != 'file'
+      ) {
+        input.value = inputValue
+      }
 
-    //check checkbox
-    if (input.type == 'checkbox') {
-      input.checked = inputValue
-    }
+      //check checkbox
+      if (input.type == 'checkbox') {
+        input.checked = inputValue
+      }
 
-    //selected option
-    if (input.name == 'gender' || input.name == 'interested_in') {
-      const selectedIndex = document.querySelector(
-        `#${input.id} option[value="${inputValue}"]`
-      ).index
-      input.options.selectedIndex = selectedIndex
-    }
-  })
+      //selected option
+      if (input.name == 'gender' || input.name == 'interested_in') {
+        const selectedIndex = document.querySelector(
+          `#${input.id} option[value="${inputValue}"]`
+        ).index
+        input.options.selectedIndex = selectedIndex
+      }
+    })
+  }
 }
 
-fillEditForm()
+if (edit_profile_form) fillEditForm()
