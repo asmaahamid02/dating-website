@@ -1,25 +1,32 @@
 window.stop()
 
 const usersContainer = document.querySelector('.users')
+const headerImage = document.querySelector('.header > img')
+const headerTitle = document.querySelector('.header > h3')
 const send_button = document.querySelector('.btn-send')
 const message = document.getElementById('message')
-const getUsers = async () => {
-  const response = await common.getAPI(`${common.baseURL}/users`, common.token)
+const chat_container = document.querySelector('.chat-container')
 
-  response.data.forEach((user) => {
-    usersContainer.appendChild(createUsers(user))
-  })
+const containers = {
+  main: usersContainer,
+  chat: chat_container,
+  image: headerImage,
+  header: headerTitle,
 }
 
-getUsers()
+//display users to message
+getUsers(containers, 'message')
 
+//display the messages of the saved user in local Storage
+getMessagesOfClickedUser(containers)
+
+//send message action
 send_button.addEventListener('click', async () => {
-  receiver_id = JSON.parse(localStorage.getItem('receiver_id'))
+  const receiver_id = JSON.parse(localStorage.getItem('receiver')).id
   const response = await common.postAPI(
     `${common.baseURL}/messages/send/${receiver_id}`,
     { message: message.value },
     common.token
   )
-
   common.refresh()
 })
