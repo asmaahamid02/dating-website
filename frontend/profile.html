@@ -23,15 +23,47 @@
             </ul>
         </nav>
         <div class="edit-container">
-            <h1 class="title">Edit Profile</h1>
+            <h1 class="title page-title">Edit Profile</h1>
             <p class="success-message hide">Message</p>
             <p class="error-message hide">Message</p>
-            <form class="login-form" id="signup">
+            <form class="login-form" id="edit-profile">
                 <div class="input-container">
                     <input type="text" name="name" class="input" id="name" placeholder="a">
                     <label for="name" class="label">Name</label>
                 </div>
                 <p class="input-message hide" id="input-name">Message</p>
+                <div class="input-container">
+                    <input type="text" name="nickname" class="input" id="nickname" placeholder="a">
+                    <label for="nickname" class="label">Nickname</label>
+                </div>
+                <p class="input-message hide" id="input-nickname">Message</p>
+                <div class="input-container">
+                    <input type="text" name="bio" id="bio" class="input" placeholder="a">
+                    <label for="bio" class="label">Bio</label>
+                </div>
+                <p class="input-message hide" id="input-bio">Message</p>
+                <div class="input-container">
+                    <input type="date" name="birthdate" class="input" id="birthdate" placeholder="a">
+                    <label for="birthdate" class="label">Birth Date</label>
+                </div>
+                <p class="input-message hide" id="input-birthdate">Message</p>
+                <div class="flex-wrapper">
+                    <div class="inner-wrapper">
+                        <div class="input-container">
+                            <input type="file" name="profile_picture" class="input" id="profile_picture"
+                                placeholder="a">
+                            <!-- <label for="profile_picture" class="label">Profile Picture</label> -->
+                        </div>
+                        <p class="input-message hide" id="input-profile_picture">Message</p>
+                    </div>
+                    <div class="inner-wrapper">
+                        <div class="input-container">
+                            <input type="number" name="age" class="input" id="age" placeholder="a">
+                            <label for="age" class="label">Age</label>
+                        </div>
+                        <p class="input-message hide" id="input-age">Message</p>
+                    </div>
+                </div>
                 <div class="flex-wrapper">
                     <div class="inner-wrapper">
                         <div class="input-container">
@@ -73,15 +105,16 @@
                     </div>
                 </div>
                 <div class="login-actions">
-                    <button class="btn btn-submit">Create Account</button>
+                    <div class="flex">
+                        <input type="checkbox" name="is_visible" id="is_visible">
+                        <label for="is_visible">visible</label>
+                    </div>
+                    <button class=" btn btn-submit">Update</button>
                 </div>
 
             </form>
         </div>
     </div>
-
-
-
 
     <script src="./scripts/axios.min.js"></script>
     <script src="./scripts/script.js"></script>
