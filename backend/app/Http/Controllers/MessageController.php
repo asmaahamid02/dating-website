@@ -32,11 +32,15 @@ class MessageController extends Controller
             //     $q->where('receiver_id', $receiver_id);
             // })->get();
 
-            $sender_messages = DB::table('messages')->where('sender_id', $sender_id)->get();
-            $receiver_messages = DB::table('messages')
-                ->where('receiver_id', $receiver_id)->get();
+            $sender_messages = DB::table('messages')->where('sender_id', $sender_id)->where('receiver_id', $receiver_id);
+            // $receiver_messages = DB::table('messages')->where('sender_id', $receiver_id)->where('receiver_id', $sender_id)->get();
 
-            $messages = $sender_messages->union($receiver_messages)->sortByDesc('created_at');
+            $messages = DB::table('messages')
+                ->where('sender_id', $receiver_id)
+                ->where('receiver_id', $sender_id)
+                ->unionAll($sender_messages)
+                ->orderBy('created_at')
+                ->get();
 
             if ($messages->isNotEmpty())
                 return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
