@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\ResponseJson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,11 +25,18 @@ class MessageController extends Controller
             //get the users that match with sender and receiver
             //then get those who $this user sends them messages (sender relation)
             //then get the messages from the other user sent to $this user (receiver relation)
-            $messages = User::where('id', $receiver_id)->orWhere('id', $sender_id)->with('profile')->with('sender', function ($q) use ($sender_id) {
-                $q->where('sender_id', $sender_id);
-            })->with('receiver', function ($q) use ($receiver_id) {
-                $q->where('receiver_id', $receiver_id);
-            })->get();
+
+            // $messages = User::where('id', $receiver_id)->orWhere('id', $sender_id)->with('profile')->with('sender', function ($q) use ($sender_id) {
+            //     $q->where('sender_id', $sender_id);
+            // })->with('receiver', function ($q) use ($receiver_id) {
+            //     $q->where('receiver_id', $receiver_id);
+            // })->get();
+
+            $sender_messages = DB::table('messages')->where('sender_id', $sender_id)->get();
+            $receiver_messages = DB::table('messages')
+                ->where('receiver_id', $receiver_id)->get();
+
+            $messages = $sender_messages->union($receiver_messages)->sortByDesc('created_at');
 
             if ($messages->isNotEmpty())
                 return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
