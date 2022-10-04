@@ -137,6 +137,36 @@ const signup = () => {
   })
 }
 
+//get the base64 of the chosen image
+let base64_image
+if (edit_profile_form) {
+  document.getElementById('profile_picture').onchange = function () {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const image = reader.result
+      // document.getElementById('image-element').src = image
+      base64_image = image
+    }
+    console.log(reader.files)
+    reader.readAsDataURL(this.files[0])
+  }
+}
+
+const updateUserInLocalStorage = (item, key, newValue) => {
+  // Get the existing data
+  var existing = localStorage.getItem(item)
+
+  // If no existing data, create an array
+  // Otherwise, convert the localStorage string to an array
+  existing = existing ? JSON.parse(existing) : {}
+
+  // Add new data to localStorage Array
+  existing[key] = newValue
+
+  // Save back to localStorage
+  localStorage.setItem(item, JSON.stringify(existing))
+}
+
 // edit profile function
 const editProfile = () => {
   edit_profile_form.addEventListener('submit', async (e) => {
@@ -149,8 +179,9 @@ const editProfile = () => {
     //   e.preventDefault()
     // } else {
     let userData = new FormData(edit_profile_form)
+    userData.set('profile_picture', base64_image)
     const response = await common.postAPI(
-      `${common.baseURL}/edit`,
+      `${common.baseURL}/users/edit`,
       userData,
       common.token
     )
@@ -160,15 +191,15 @@ const editProfile = () => {
       //success
       displaySuccessMessage(response.message)
 
-      //move to the login page
-      common.changeRoute('index.html')
+      updateUserInLocalStorage(
+        '__DateUser',
+        'picture',
+        response.data.profile_picture
+      )
+      common.refresh()
     } else {
       //error
-      displayErrorMessage(
-        response.data && response.data.email
-          ? response.data.email
-          : response.message
-      )
+      displayErrorMessage(response.data ? response.data : response.message)
     }
     // }
   })
