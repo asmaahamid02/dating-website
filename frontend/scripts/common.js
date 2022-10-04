@@ -3,7 +3,7 @@ const getUsers = async (containers, page = 'home') => {
   if (page === 'message' && !localStorage.getItem('receiver')) {
     //save the fisrt user id to retreive his/her messages
     receiver = {
-      id: user.response.data[0].id,
+      id: response.data[0].id,
       name: response.data[0].name,
       picture: response.data[0].profile
         ? response.data[0].profile.profile_picture
@@ -11,6 +11,7 @@ const getUsers = async (containers, page = 'home') => {
     }
     localStorage.setItem('receiver', JSON.stringify(receiver))
   }
+  containers.main.innerHTML = ''
   response.data.forEach((user) => {
     if (page == 'home') {
       containers.main.appendChild(createProfileCard(user))
@@ -116,3 +117,12 @@ const getMessagesOfClickedUser = async (containers) => {
   }
   return getMessages(user, containers)
 }
+
+const logout = document.getElementById('logout')
+
+logout.addEventListener('click', (e) => {
+  e.preventDefault()
+  localStorage.removeItem('__DateUser')
+  localStorage.removeItem('receiver')
+  common.refresh(500)
+})
