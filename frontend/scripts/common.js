@@ -1,10 +1,21 @@
-const getUsers = async (container, page = 'home', chatContainer = null) => {
+const getUsers = async (containers, page = 'home') => {
   const response = await common.getAPI(`${common.baseURL}/users`, common.token)
+  if (page === 'message' && !localStorage.getItem('receiver')) {
+    //save the fisrt user id to retreive his/her messages
+    receiver = {
+      id: user.response.data[0].id,
+      name: response.data[0].name,
+      picture: response.data[0].profile
+        ? response.data[0].profile.profile_picture
+        : null,
+    }
+    localStorage.setItem('receiver', JSON.stringify(receiver))
+  }
   response.data.forEach((user) => {
     if (page == 'home') {
-      container.appendChild(createProfileCard(user))
+      containers.main.appendChild(createProfileCard(user))
     } else if (page == 'message') {
-      container.appendChild(createUsers(user, chatContainer))
+      containers.main.appendChild(createUsers(user, containers))
     }
   })
 }
@@ -54,26 +65,54 @@ const blockUser = (id) => async () => {
   common.refresh()
 }
 
-const getMessages = (receiver_id, container) => async () => {
-  container.innerHTML = ''
-  localStorage.setItem('receiver_id', receiver_id)
+const getMessages = async (user, containers) => {
+  containers.chat.innerHTML = ''
+  const receiverImage = user.profile ? user.profile.profile_picture : null
+  receiver = {
+    id: user.id,
+    name: user.name,
+    picture: receiverImage,
+  }
+  localStorage.setItem('receiver', JSON.stringify(receiver))
+
   const response = await common.getAPI(
-    `${common.baseURL}/messages/${common.userID}/${receiver_id}`,
+    `${common.baseURL}/messages/${user.id}`,
     common.token
   )
+
+  containers.image.src = receiverImage
+    ? `${profiles_path}${receiverImage}`
+    : `${default_image}`
+
+  containers.header.innerText = user.name ? `${user.name}` : `Username`
+
   if (!response.data) {
-    container.innerHTML = '<h1>No Messages</h1>'
+    containers.chat.innerHTML = '<p class="no-data">No Messages</p>'
     return
   }
-  response.data.forEach((user) => {
-    if (user.id == common.userID) {
-      user.sender.forEach((message) => {
-        container.appendChild(createMessages('receiver', message.pivot.message))
-      })
+  response.data.forEach((message) => {
+    if (message.sender_id == common.userID) {
+      containers.chat.appendChild(
+        createSenderDiv(message.message, common.userProfile)
+      )
     } else {
-      user.sender.forEach((message) => {
-        container.appendChild(createMessages('sender', message.pivot.message))
-      })
+      containers.chat.appendChild(
+        createReceiverDiv(message.message, receiverImage)
+      )
     }
   })
+
+  // common.Console('Messages', response.data)
+}
+
+const getMessagesOfClickedUser = async (containers) => {
+  const receiver = JSON.parse(localStorage.getItem('receiver'))
+  user = {
+    id: receiver.id,
+    name: receiver.name,
+    profile: {
+      profile_picture: receiver.picture,
+    },
+  }
+  return getMessages(user, containers)
 }
