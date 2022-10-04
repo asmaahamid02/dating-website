@@ -38,7 +38,7 @@ Route::group(['prefix' => 'v0.1'], function () {
 
         ####Start Messages####
         Route::group(['prefix' => 'messages'], function () {
-            Route::get('/{sender_id}/{receiver_id}', [MessageController::class, 'getMessages']);
+            Route::get('/{receiver_id}', [MessageController::class, 'getMessages']);
             Route::post('/send/{receiver_id}', [MessageController::class, 'sendMessage']);
         });
         ####End Messages####
