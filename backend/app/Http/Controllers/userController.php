@@ -58,10 +58,16 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::where('id', $id)
-            ->where('is_visible', 1)
-            ->with('profile')
-            ->first();
+        if ($id != Auth::id()) {
+            $user = User::where('id', $id)
+                ->where('is_visible', 1)
+                ->with('profile')
+                ->first();
+        } else {
+            $user = Auth::user();
+            $user->profile = $user->profile;
+        }
+
 
         if ($user)
             return $this->jsonResponse($user, 'data', Response::HTTP_OK);
