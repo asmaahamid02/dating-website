@@ -14,19 +14,21 @@ class MessageController extends Controller
 {
     use ResponseJson;
 
-    public function getMessages($sender_id, $receiver_id)
+    public function getMessages($receiver_id)
     {
         // $sender_id = auth()->id();
-        $sender = User::where('id', $sender_id)->where('is_visible', 1)->first();
+        $sender_id = Auth::id();
         $recipient = User::where('id', $receiver_id)->where('is_visible', 1)->first();
 
-        if ($recipient && $sender) {
-
-            $messages = User::whereHas('sender', function ($q) use ($sender_id, $receiver_id) {
-                $q->where('sender_id', $sender_id)->where('receiver_id', $receiver_id);
-            })->orWhereHas('receiver', function ($q) use ($sender_id, $receiver_id) {
-                $q->where('sender_id', $sender_id)->where('receiver_id', $receiver_id);
-            })->with('profile')->with('sender')->get();
+        if ($recipient) {
+            //get the users that match with sender and receiver
+            //then get those who $this user sends them messages (sender relation)
+            //then get the messages from the other user sent to $this user (receiver relation)
+            $messages = User::where('id', $receiver_id)->orWhere('id', $sender_id)->with('profile')->with('sender', function ($q) use ($sender_id) {
+                $q->where('sender_id', $sender_id);
+            })->with('receiver', function ($q) use ($receiver_id) {
+                $q->where('receiver_id', $receiver_id);
+            })->get();
 
             if ($messages->isNotEmpty())
                 return $this->jsonResponse($messages, 'data', Response::HTTP_OK);
