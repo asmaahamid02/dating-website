@@ -39,10 +39,10 @@ common.postAPI = async (api_url, api_data, token = null) => {
   }
 }
 
-common.refresh = () => {
+common.refresh = (duration = 1000) => {
   setTimeout(function () {
     window.location.reload()
-  }, 1000)
+  }, duration)
 }
 
 common.changeRoute = (page) => {
@@ -53,6 +53,10 @@ common.changeRoute = (page) => {
 
 common.userID = localStorage.getItem('__DateUser')
   ? JSON.parse(localStorage.getItem('__DateUser')).id
+  : null
+
+common.userProfile = localStorage.getItem('__DateUser')
+  ? JSON.parse(localStorage.getItem('__DateUser')).picture
   : null
 
 common.token = localStorage.getItem('__DateUser')
