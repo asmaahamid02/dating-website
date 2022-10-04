@@ -66,6 +66,7 @@ class AuthController extends Controller
         }
         $user = Auth::user();
         $user->token = $token;
+        $user->profile = $user->profile;
         return $this->jsonResponse($user, 'data', Response::HTTP_OK, 'Logged In Successfully');
     }
 
